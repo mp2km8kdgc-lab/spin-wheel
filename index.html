@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spin Wheel</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+<div id="app">
+
+<div id="leftPanel">
+
+<h2 > What's the plan, my dude?
+(Hit Enter to create another option.)</h2>
+
+<textarea id="batchInput" placeholder="what's in your mind"></textarea>
+
+<button id="applyBatch">apply</button>
+
+<ul id="itemList"></ul>
+
+</div>
+
+<div id="wheelContainer">
+
+<canvas id="wheelCanvas"></canvas>
+
+<div id="hint">
+Press the space bar / click the wheel to start.
+</div>
+
+<div id="pointer"></div>
+
+</div>
+
+</div>
+
+<div id="resultModal">
+<div class="modalContent">
+<h1 id="resultText"></h1>
+<button id="spinAgain">OK</button>
+</div>
+</div>
+
+<audio id="tickSound">
+<source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3">
+</audio>
+
+<script src="app.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+</body>
+</html>
