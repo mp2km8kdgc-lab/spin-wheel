@@ -1,40 +1,61 @@
-const canvas = document.getElementById("wheelCanvas");
-const ctx = canvas.getContext("2d");
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spin Wheel</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
 
-const ratio = window.devicePixelRatio || 1;
-canvas.width = 650 * ratio;
-canvas.height = 650 * ratio;
-canvas.style.width = "650px";
-canvas.style.height = "650px";
+<body>
 
-ctx.scale(ratio, ratio);
-ctx.imageSmoothingEnabled = true;
+<div id="app">
 
-let items = ["A", "B", "C", "D", "E"];
-let angle = 0;
-let spinning = false;
+<div id="leftPanel">
 
-const tickSound = document.getElementById("tickSound");
+<h2 >Hey, this is Gwen, I told you guys that I am a genius! What's the plan, my dude?
+(Hit Enter to create another ption.)</h2>
 
-// ========== 确保音频元素存在（如果没有，可以创建一个静音占位）==========
-if (!tickSound) {
-    console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
-}
+<textarea id="batchInput" placeholder="what's in your mind"></textarea>
 
-// ========== Socket.IO 初始化 ==========
-let socket;
-if (typeof io !== "undefined") {
-    socket = io("http://localhost:3000");
-} else {
-    console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
-}
+<button id="applyBatch">apply</button>
 
-// ========== 获取客户端 ID 和轮盘 ID ==========
-function getClientId() {
-    let id = localStorage.getItem("client_id");
-    if (!id) {
-        id = crypto.randomUUID();
-        localStorage.setItem("client_id", id);
+<ul id="itemList"></ul>
+
+</div>
+
+<div id="wheelContainer">
+
+<canvas id="wheelCanvas"></canvas>
+
+<div id="hint">
+Press the space bar / click the wheel to start.
+</div>
+
+<div id="pointer"></div>
+
+</div>
+
+</div>
+
+<div id="resultModal">
+<div class="modalContent">
+<h1 id="resultText"></h1>
+<button id="spinAgain">OK</button>
+</div>
+</div>
+
+<audio id="tickSound">
+<source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3">
+</audio>
+
+<script src="app.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+</body>
+</html>        localStorage.setItem("client_id", id);
     }
     return id;
 }
