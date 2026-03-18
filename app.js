@@ -16,7 +16,12 @@ let spinning = false;
 
 const tickSound = document.getElementById("tickSound");
 
-// ========== Socket.IO intialize）==========
+// ========== 确保音频元素存在（如果没有，可以创建一个静音占位）==========
+if (!tickSound) {
+    console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
+}
+
+// ========== Socket.IO 初始化 ==========
 let socket;
 if (typeof io !== "undefined") {
     socket = io("http://localhost:3000");
@@ -24,7 +29,7 @@ if (typeof io !== "undefined") {
     console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
 }
 
-// ==========grab id and incloud ==========
+// ========== 获取客户端 ID 和轮盘 ID ==========
 function getClientId() {
     let id = localStorage.getItem("client_id");
     if (!id) {
@@ -61,7 +66,7 @@ function loadWheel() {
 }
 loadWheel();
 
-// ========== role） ==========
+// ========== 角色控制 ==========
 const role = new URLSearchParams(location.search).get("role");
 if (role === "v") {
     const batchInput = document.getElementById("batchInput");
@@ -74,14 +79,26 @@ if (socket) {
     socket.emit("update", { wheel_id, items });
 
     socket.on("wheel_update", (data) => {
-        // data 是从服务器收到的 items 数组
-        items = data;
+        items = data;          // data 应为数组
         renderList();
     });
 
     socket.on("spin_result", (data) => {
         showResult(data.result);
     });
+}
+
+// ========== Supabase 初始化（如需使用）==========
+// 注意：你的 HTML 已引入 supabase 库，请使用正确的项目 URL 和 anon key
+let supabaseClient = null;
+if (typeof supabase !== "undefined") {
+    // 替换为你的真实项目 URL 和 anon key
+    const SUPABASE_URL = "https://你的项目.supabase.co";
+    const SUPABASE_ANON_KEY = "你的anon key";
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("Supabase 客户端已初始化");
+} else {
+    console.warn("Supabase 库未加载，请检查 HTML 中的 script 标签");
 }
 
 // ========== 绘制转盘 ==========
@@ -140,8 +157,10 @@ function spin() {
 
         let sector = Math.floor(angle / (Math.PI * 2 / items.length));
         if (sector !== lastSector) {
-            tickSound.currentTime = 0;
-            tickSound.play().catch(() => { });
+            if (tickSound) {
+                tickSound.currentTime = 0;
+                tickSound.play().catch(() => {});
+            }
             lastSector = sector;
         }
 
@@ -156,7 +175,6 @@ function spin() {
 
             showResult(result);
 
-            // 可选：将结果发送给服务器（让其他观众看到）
             if (socket) {
                 socket.emit("spin", { wheel_id, result });
             }
