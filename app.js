@@ -16,7 +16,7 @@ let spinning = false;
 
 const tickSound = document.getElementById("tickSound");
 
-// ========== 确保音频元素存在（如果没有，可以创建一个静音占位）==========
+
 if (!tickSound) {
     console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
 }
@@ -29,7 +29,7 @@ if (typeof io !== "undefined") {
     console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
 }
 
-// ========== 获取客户端 ID 和轮盘 ID ==========
+
 function getClientId() {
     let id = localStorage.getItem("client_id");
     if (!id) {
@@ -53,7 +53,7 @@ function getWheelId() {
 const client_id = getClientId();
 const wheel_id = getWheelId();
 
-// ========== 本地存储 ==========
+
 function saveWheel() {
     localStorage.setItem("wheel_" + wheel_id, JSON.stringify(items));
 }
@@ -88,20 +88,19 @@ if (socket) {
     });
 }
 
-// ========== Supabase 初始化（如需使用）==========
-// 注意：你的 HTML 已引入 supabase 库，请使用正确的项目 URL 和 anon key
+
 let supabaseClient = null;
 if (typeof supabase !== "undefined") {
-    // 替换为你的真实项目 URL 和 anon key
-    const SUPABASE_URL = "https://你的项目.supabase.co";
-    const SUPABASE_ANON_KEY = "你的anon key";
+   
+    const SUPABASE_URL = "https://yqtaipulflecmlisbrqm.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_G2YhovkRcGRdIgh3Sx8LTQ_6_LGOsEJ";
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("Supabase 客户端已初始化");
 } else {
     console.warn("Supabase 库未加载，请检查 HTML 中的 script 标签");
 }
 
-// ========== 绘制转盘 ==========
+
 function drawWheel() {
     ctx.clearRect(0, 0, 650, 650);
 
@@ -141,7 +140,7 @@ function drawWheel() {
 }
 drawWheel();
 
-// ========== 旋转逻辑 ==========
+
 function spin() {
     if (spinning) return;
     spinning = true;
@@ -187,7 +186,7 @@ function spin() {
     animate();
 }
 
-// ========== 结果显示 ==========
+
 function showResult(text) {
     let modal = document.getElementById("resultModal");
     document.getElementById("resultText").innerText = text;
@@ -207,7 +206,7 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// ========== 批量添加项目 ==========
+
 document.getElementById("applyBatch").onclick = () => {
     let lines = document.getElementById("batchInput").value.split("\n");
     items = lines.filter(v => v.trim() != "");
@@ -218,7 +217,7 @@ document.getElementById("applyBatch").onclick = () => {
     }
 };
 
-// ========== 渲染可编辑列表 ==========
+
 function renderList() {
     let ul = document.getElementById("itemList");
     ul.innerHTML = "";
