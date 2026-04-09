@@ -16,7 +16,7 @@ let spinning = false;
 
 const tickSound = document.getElementById("tickSound");
 
-
+// ========== 确保音频元素存在 ==========
 if (!tickSound) {
     console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
 }
@@ -24,12 +24,12 @@ if (!tickSound) {
 // ========== Socket.IO 初始化 ==========
 let socket;
 if (typeof io !== "undefined") {
-    socket = io("http://localhost:3000");
+    socket = io("https://spin-wheel-lk2g.onrender.com");   // 修正地址和语法
 } else {
     console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
 }
 
-
+// ========== 获取客户端 ID 和轮盘 ID ==========
 function getClientId() {
     let id = localStorage.getItem("client_id");
     if (!id) {
@@ -53,7 +53,7 @@ function getWheelId() {
 const client_id = getClientId();
 const wheel_id = getWheelId();
 
-
+// ========== 本地存储 ==========
 function saveWheel() {
     localStorage.setItem("wheel_" + wheel_id, JSON.stringify(items));
 }
@@ -79,7 +79,7 @@ if (socket) {
     socket.emit("update", { wheel_id, items });
 
     socket.on("wheel_update", (data) => {
-        items = data;          // data 应为数组
+        items = data;
         renderList();
     });
 
@@ -88,19 +88,7 @@ if (socket) {
     });
 }
 
-
-let supabaseClient = null;
-if (typeof supabase !== "undefined") {
-   
-    const SUPABASE_URL = "https://yqtaipulflecmlisbrqm.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_G2YhovkRcGRdIgh3Sx8LTQ_6_LGOsEJ";
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("Supabase 客户端已初始化");
-} else {
-    console.warn("Supabase 库未加载，请检查 HTML 中的 script 标签");
-}
-
-
+// ========== 绘制转盘 ==========
 function drawWheel() {
     ctx.clearRect(0, 0, 650, 650);
 
@@ -140,7 +128,7 @@ function drawWheel() {
 }
 drawWheel();
 
-
+// ========== 旋转逻辑 ==========
 function spin() {
     if (spinning) return;
     spinning = true;
@@ -186,7 +174,7 @@ function spin() {
     animate();
 }
 
-
+// ========== 结果显示 ==========
 function showResult(text) {
     let modal = document.getElementById("resultModal");
     document.getElementById("resultText").innerText = text;
@@ -206,7 +194,7 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-
+// ========== 批量添加项目 ==========
 document.getElementById("applyBatch").onclick = () => {
     let lines = document.getElementById("batchInput").value.split("\n");
     items = lines.filter(v => v.trim() != "");
@@ -217,7 +205,7 @@ document.getElementById("applyBatch").onclick = () => {
     }
 };
 
-
+// ========== 渲染可编辑列表 ==========
 function renderList() {
     let ul = document.getElementById("itemList");
     ul.innerHTML = "";
