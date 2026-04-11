@@ -1,40 +1,196 @@
-body{
-margin:0;
-background:#0f172a;
-font-family:Arial;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-overflow:hidden;
+body {
+    margin: 0;
+    background: #0f172a;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-#app{
-display:flex;
-gap:40px;
-align-items:center;
+#app {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-#wheelContainer{
-position:relative;
-width:650px;
-height:650px;
-display:flex;
-justify-content:center;
-align-items:center;
+#wheelContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 移除固定宽高，由内部 canvas 撑开，再通过媒体查询控制尺寸 */
+    width: auto;
+    height: auto;
 }
 
-#wheelCanvas{
-width:650px;
-height:650px;
+#wheelCanvas {
+    width: 650px;
+    height: 650px;
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
 
-#pointer{
-position:absolute;
-top:5px;
-left:50%;
-transform:translateX(-50%) rotate(180deg);
+#pointer {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid white;
+    filter: drop-shadow(0 0 6px white);
+    z-index: 10;
+}
+
+#hint {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    opacity: 0.7;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+#resultModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.modalContent {
+    background: #111827;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.modalContent h1 {
+    font-size: 42px;
+    margin: 0 0 20px;
+}
+
+.modalContent button {
+    padding: 10px 20px;
+    background: #22c55e;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+/* ========== 手机端适配 ========== */
+@media (max-width: 768px) {
+    #app {
+        flex-direction: column;
+        gap: 20px;
+        padding: 15px;
+    }
+
+    #wheelContainer {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #wheelCanvas {
+        width: 85vw !important;
+        height: 85vw !important;
+        max-width: 450px;
+        max-height: 450px;
+    }
+
+    #pointer {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 30px solid white;
+        top: 3px;
+    }
+
+    #hint {
+        font-size: 12px;
+        bottom: 5px;
+    }
+
+    .modalContent {
+        padding: 20px;
+        width: 80%;
+        box-sizing: border-box;
+    }
+
+    .modalContent h1 {
+        font-size: 28px;
+    }
+}
+
+/* 左侧面板样式（你没有提供，但为了完整保留） */
+#leftPanel {
+    background: rgba(30, 30, 40, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 16px;
+    width: 260px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+#batchInput {
+    width: 100%;
+    height: 100px;
+    background: #1e1e2a;
+    color: white;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    padding: 8px;
+    resize: vertical;
+    margin-bottom: 10px;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+#applyBatch {
+    width: 100%;
+    padding: 8px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+#itemList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#itemList li {
+    background: #2a2a36;
+    margin: 6px 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: text;
+}transform:translateX(-50%) rotate(180deg);
 width:0;
 height:0;
 border-left:20px solid transparent;
