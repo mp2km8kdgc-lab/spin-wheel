@@ -1,13 +1,11 @@
 const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 
-// 固定内部像素尺寸为 650x650（不要动态修改）
-const FIXED_SIZE = 650;
 const ratio = window.devicePixelRatio || 1;
-canvas.width = FIXED_SIZE * ratio;
-canvas.height = FIXED_SIZE * ratio;
-canvas.style.width = `${FIXED_SIZE}px`;
-canvas.style.height = `${FIXED_SIZE}px`;
+canvas.width = 650 * ratio;
+canvas.height = 650 * ratio;
+canvas.style.width = "650px";
+canvas.style.height = "650px";
 
 ctx.scale(ratio, ratio);
 ctx.imageSmoothingEnabled = true;
@@ -20,14 +18,6 @@ const tickSound = document.getElementById("tickSound");
 
 if (!tickSound) {
     console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
-}
-
-// ========== Socket.IO 初始化 ==========
-let socket;
-if (typeof io !== "undefined") {
-    socket = io("https://spin-wheel-lk2g.onrender.com");
-} else {
-    console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
 }
 
 // ========== 获取客户端 ID 和轮盘 ID ==========
@@ -67,32 +57,16 @@ function loadWheel() {
 }
 loadWheel();
 
-// ========== 角色控制 ==========
+// ========== 角色控制（仅用于禁用编辑，无后端同步）==========
 const role = new URLSearchParams(location.search).get("role");
 if (role === "v") {
     const batchInput = document.getElementById("batchInput");
     if (batchInput) batchInput.disabled = true;
 }
 
-// ========== Socket 事件监听 ==========
-if (socket) {
-    socket.emit("join", wheel_id);
-    socket.emit("update", { wheel_id, items });
-
-    socket.on("wheel_update", (data) => {
-        items = data;
-        renderList();
-    });
-
-    socket.on("spin_result", (data) => {
-        showResult(data.result);
-    });
-}
-
 // ========== 绘制转盘 ==========
 function drawWheel() {
-    // 注意：ctx 的坐标系仍然是 650x650
-    ctx.clearRect(0, 0, FIXED_SIZE, FIXED_SIZE);
+    ctx.clearRect(0, 0, 650, 650);
 
     let radius = 300;
     let center = 325;
@@ -163,10 +137,6 @@ function spin() {
             let result = items[index];
 
             showResult(result);
-
-            if (socket) {
-                socket.emit("spin", { wheel_id, result });
-            }
             return;
         }
 
@@ -202,9 +172,6 @@ document.getElementById("applyBatch").onclick = () => {
     items = lines.filter(v => v.trim() != "");
     saveWheel();
     renderList();
-    if (socket) {
-        socket.emit("update", { wheel_id, items });
-    }
 };
 
 // ========== 渲染可编辑列表 ==========
@@ -218,9 +185,6 @@ function renderList() {
         li.oninput = () => {
             items[i] = li.innerText;
             saveWheel();
-            if (socket) {
-                socket.emit("update", { wheel_id, items });
-            }
         };
         ul.appendChild(li);
     });
