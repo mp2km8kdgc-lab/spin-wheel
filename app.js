@@ -1,11 +1,13 @@
 const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 
+// 固定内部像素尺寸为 650x650（不要动态修改）
+const FIXED_SIZE = 650;
 const ratio = window.devicePixelRatio || 1;
-canvas.width = 650 * ratio;
-canvas.height = 650 * ratio;
-canvas.style.width = "650px";
-canvas.style.height = "650px";
+canvas.width = FIXED_SIZE * ratio;
+canvas.height = FIXED_SIZE * ratio;
+canvas.style.width = `${FIXED_SIZE}px`;
+canvas.style.height = `${FIXED_SIZE}px`;
 
 ctx.scale(ratio, ratio);
 ctx.imageSmoothingEnabled = true;
@@ -16,7 +18,6 @@ let spinning = false;
 
 const tickSound = document.getElementById("tickSound");
 
-// ========== 确保音频元素存在 ==========
 if (!tickSound) {
     console.warn("未找到 tickSound 元素，请添加 <audio id='tickSound' src='tick.mp3'></audio>");
 }
@@ -24,7 +25,7 @@ if (!tickSound) {
 // ========== Socket.IO 初始化 ==========
 let socket;
 if (typeof io !== "undefined") {
-    socket = io("https://spin-wheel-lk2g.onrender.com");   // 修正地址和语法
+    socket = io("https://spin-wheel-lk2g.onrender.com");
 } else {
     console.error("Socket.IO client not loaded. Please include <script src='/socket.io/socket.io.js'></script>");
 }
@@ -90,7 +91,8 @@ if (socket) {
 
 // ========== 绘制转盘 ==========
 function drawWheel() {
-    ctx.clearRect(0, 0, 650, 650);
+    // 注意：ctx 的坐标系仍然是 650x650
+    ctx.clearRect(0, 0, FIXED_SIZE, FIXED_SIZE);
 
     let radius = 300;
     let center = 325;
